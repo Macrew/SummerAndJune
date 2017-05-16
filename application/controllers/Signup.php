@@ -1,0 +1,202 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Signup extends CI_Controller {
+	public function __construct(){
+		parent::__construct();
+
+        // To use site_url and redirect on this controller.
+		$this->load->library('googleplus');
+        $this->load->helper('url');
+		$this->load->model('Common_Model');
+		$this->load->library('session');
+	}
+	
+	public function index()
+	{
+		$user_session = $this->session->userdata('logged_in');
+		
+		if(!$user_session['social_profile_id']){
+			if (!$this->googleplus->client->getAccessToken()){	// Need to set a session here if he is already logged in
+				$authUrl = $this->googleplus->client->createAuthUrl();	
+				$data['google_login_url'] = $authUrl;
+			}else{	
+				
+			}
+			$this->load->view('header');
+			$this->load->view('signup',$data);
+			$this->load->view('footer');
+		}
+		else
+		{
+			redirect(base_url(),'refresh');
+		}
+		
+	}
+	
+	public function signup()
+	{
+		if (!$this->googleplus->client->getAccessToken()){	// Need to set a session here if he is already logged in
+			$authUrl = $this->googleplus->client->createAuthUrl();	
+			$data['google_login_url'] = $authUrl;
+		}else{	
+			
+		}
+		
+        $this->load->view('header');
+        $this->load->view('signup',$data);
+		$this->load->view('footer');
+	}
+	
+	/*
+	*
+	*	 Save facebook Data  and set session for login user
+	*
+	*/
+	public function saveFacebookUserData(){
+		
+		$first_name = $_POST['first_name'];
+		$last_name 	= $_POST['last_name'];
+		$email 		= $_POST['email'];
+		$social_id 	= $_POST['social_id'];
+		//$user_role 	= $this->session->userdata('signup_role');
+		$checkEmail = $this->Common_Model->has_duplicate($email, 'sj_users', 'email');
+		if($checkEmail > 0)
+		{
+			$result = $this->Common_Model->getRow('sj_users','email',$email);
+			// print_r($result); 
+			if($result)
+			{
+				$sess_array = array();
+				$sess_array = array(
+					'social_profile_id' => $result->social_profile_id,
+					'user_role' => $result->user_role,
+					'email' => $result->email,
+					'first_name' => $result->first_name,
+					'last_name' => $result->last_name,
+				);
+				$this->session->set_userdata('logged_in', $sess_array); 
+				if($result->user_role == 1){
+					echo base_url('instructor/dashboard');
+				}else{
+					echo base_url('student/dashboard');
+				}
+		   }
+		   else
+		   {
+			 $this->session->set_flashdata('errormessage', 'invalid username/password');
+			  redirect('login', 'refresh');
+		   }
+		}
+		else{
+			$tableData = array(
+					'social_profile_id' =>$social_id,
+					'user_role' =>$this->session->userdata('signup_role'),
+					'first_name' =>$first_name,
+					'last_name' =>$last_name,
+					'email' =>$email,
+					'social_type' =>'Facebook'
+				);
+			$this->Common_Model->insert('sj_users',$tableData);
+			$sess_array = array(
+				'social_profile_id' => $social_id,
+				'user_role' => $this->session->userdata('signup_role'),
+				'email' => $email,
+				'first_name' => $first_name,
+				'last_name' => $last_name,
+			);
+			$this->session->set_userdata('logged_in', $sess_array);
+			if($this->session->userdata('signup_role') == 1){
+				echo base_url('instructor/dashboard');
+			}else{
+				echo base_url('student/dashboard');
+			}
+		}
+	}
+	
+	/*
+	*
+	*	 Save Google Data  and set session for login user
+	*
+	*/
+	public function goauth_redirect(){
+		if(isset($_REQUEST['error'])){
+			redirect('signup');
+		}
+		try{
+			if($this->input->get('code')!='') {
+				$this->googleplus->client->authenticate();
+			}
+			$user_profile = $this->googleplus->people->get("me");
+		}
+		catch (GooglePlusApiException $e) {
+			//echo "error ";die;
+        	$user_profile = null;
+        }
+		// echo print_r($user_profile);die;
+		if($user_profile != null){
+			$first_name = $user_profile['name']['givenName'];
+			$last_name 	= $user_profile['name']['familyName'];
+			$email 		= $user_profile['emails'][0]['value'];
+			$social_id 	= $user_profile['id'];
+			//$user_role 	= $this->session->userdata('signup_role');
+			$checkEmail = $this->Common_Model->has_duplicate($email, 'sj_users', 'email');
+			if($checkEmail > 0)
+			{
+				$result = $this->Common_Model->getRow('sj_users','email',$email);
+				// print_r($result); 
+				if($result)
+				{
+					$sess_array = array();
+					$sess_array = array(
+						'social_profile_id' => $result->social_profile_id,
+						'user_role' => $result->user_role,
+						'email' => $result->email,
+						'first_name' => $result->first_name,
+						'last_name' => $result->last_name,
+					);
+					$this->session->set_userdata('logged_in', $sess_array); 
+					if($result->user_role == 1){
+						$url =  base_url('instructor/dashboard');
+						redirect($url, 'refresh');
+					}else{
+						$url =  base_url('student/dashboard');
+						redirect($url, 'refresh');
+					}
+			   }
+			   else
+			   {
+				 $this->session->set_flashdata('errormessage', 'invalid username/password');
+				  redirect('signup', 'refresh');
+			   }
+			}
+			else{
+				$tableData = array(
+						'social_profile_id' =>$social_id,
+						'user_role' =>$this->session->userdata('signup_role'),
+						'first_name' =>$first_name,
+						'last_name' =>$last_name,
+						'email' =>$email,
+						'social_type' =>'Google'
+					);
+				$this->Common_Model->insert('sj_users',$tableData);
+				$sess_array = array(
+					'social_profile_id' => $social_id,
+					'user_role' => $this->session->userdata('signup_role'),
+					'email' => $email,
+					'first_name' => $first_name,
+					'last_name' => $last_name,
+				);
+				$this->session->set_userdata('logged_in', $sess_array);
+				if($user_role == 1){
+					$url =  base_url('instructor/dashboard');
+					redirect($url, 'refresh');
+				}else{
+					$url =  base_url('student/dashboard');
+					redirect($url, 'refresh');
+				}
+			}
+			
+		}
+	}
+}

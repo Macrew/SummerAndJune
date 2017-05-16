@@ -254,11 +254,75 @@ body {
 .container {
     padding: 20px;
 }
+.inner h3 {
+    font-size: 20px;
+	padding: 30px 0 0;
+	text-indent: 20px;
+}
 /*--- Home page CSS Start here */
-
+.home-button {
+    margin: 0 0 40px;
+    text-align: center;
+    width: 100%;
+}
 
 
 /*--- Home page CSS End  here */
+
+/*--- Signup page CSS Start  here */
+.signup-bx {
+    margin: 0 auto;
+    width: 60%;
+}
+
+.box {
+    float: left;
+    text-align: center;
+    width: 50%;
+}
+
+.signup-button {
+    background: hsl(196, 65%, 49%);
+    border-color: hsl(196, 65%, 49%);
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+    color: hsl(0, 0%, 100%);
+    padding: 10px 30px;
+}
+.signup-bx .button {
+    margin: 30px 0 0;
+    padding-bottom: 20px;
+    text-align: center;
+}
+
+.signup-bx p {
+    font-weight: bold;
+    text-align: center;
+}
+/*--- Signup page CSS End  here */
+
+/*--- Instructor Dashboard page CSS Start here */
+
+ul.tab li {
+    border: 1px solid;
+    display: inline;
+    margin-left: 20px;
+    padding: 5px;
+}
+
+.tab a {
+    color: hsl(0, 0%, 47%);
+}
+
+.tab .active a {
+    color:#2CA1CC;
+}
+.username {
+    padding: 23px 0 10px 18px;
+    width: 100%;
+}
+/*--- Instructor Dashboard page CSS End here */
 
 
 /*---- Responsive  CSS Start here  ----*/

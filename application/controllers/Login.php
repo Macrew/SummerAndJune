@@ -7,95 +7,42 @@ class Login extends CI_Controller {
 
         // To use site_url and redirect on this controller.
         $this->load->helper('url');
-		$this->load->library('facebook'); 
+		//$this->load->library('googleplus');
+		$this->load->model('Common_Model');
 	}
 	public function index()
 	{
-		$this->load->library('facebook'); // Automatically picks appId and secret from config
-        // OR
-        // You can pass different one like this
-        //$this->load->library('facebook', array(
-        //    'appId' => 'APP_ID',
-        //    'secret' => 'SECRET',
-        //    ));
-
-		$user = $this->facebook->getUser();
-        
-        if ($user) {
-            try {
-                $data['user_profile'] = $this->facebook->api('/me');
-            } catch (FacebookApiException $e) {
-                $user = null;
-            }
-        }else {
-            // Solves first time login issue. (Issue: #10)
-            //$this->facebook->destroySession();
-        }
-
-        if ($user) {
-
-            $data['logout_url'] = site_url('logout'); // Logs off application
-            // OR 
-            // Logs off FB!
-            // $data['logout_url'] = $this->facebook->getLogoutUrl();
-
-        } else {
-            $data['login_url'] = $this->facebook->getLoginUrl(array(
-                'redirect_uri' => site_url('login'), 
-                'scope' => array("email") // permissions here
-            ));
-        }
-        $this->load->view('login',$data);
+		$this->load->view('login');
 	}
 	
 	public function login(){
 
-		$this->load->library('facebook'); // Automatically picks appId and secret from config
-        // OR
-        // You can pass different one like this
-        //$this->load->library('facebook', array(
-        //    'appId' => 'APP_ID',
-        //    'secret' => 'SECRET',
-        //    ));
-
-		$user = $this->facebook->getUser();
-        
-        if ($user) {
-            try {
-                $data['user_profile'] = $this->facebook->api('/me');
-            } catch (FacebookApiException $e) {
-                $user = null;
-            }
-        }else {
-            // Solves first time login issue. (Issue: #10)
-            //$this->facebook->destroySession();
-        }
-
-        if ($user) {
-
-            $data['logout_url'] = site_url('logout'); // Logs off application
-            // OR 
-            // Logs off FB!
-            // $data['logout_url'] = $this->facebook->getLogoutUrl();
-
-        } else {
-            $data['login_url'] = $this->facebook->getLoginUrl(array(
-                'redirect_uri' => site_url('login'), 
-                'scope' => array("email") // permissions here
-            ));
-        }
-        $this->load->view('login',$data);
-
+        $this->load->view('login');
+	}
+	public function saveUserData(){
+		echo '<pre>'; print_r($_POST); die;
+        $random_password = $this->user_model->generate_random_string(8);
+		$this->user_model->register($_POST['first_name'],$_POST['last_name'],$_POST['email'],md5($random_password),$_POST['email'], 'Facebook');
+		//redirect(base_url());
+		$this->user_model->update_pic($_POST['image_url']);
+		//echo $this->session->userdata('ref_url');die;
+		
+		if($this->session->userdata('ref_url') !== ''){
+			echo $this->session->userdata('ref_url');
+		}else{
+			echo base_url();
+		}
 	}
 
-    public function logout(){
-
-        $this->load->library('facebook');
-
-        // Logs off session from website
-        $this->facebook->destroySession();
-        // Make sure you destory website session as well.
-
-        redirect('welcome/login');
-    }
+    public function logout()
+	{		
+		$this->session->unset_userdata('logged_in');
+		$this->session->unset_userdata('send_data');
+	    session_destroy();
+		$this->input->set_cookie('user_id', '');
+		$this->input->set_cookie('user_name','');
+		$this->input->set_cookie('user_type', '');
+	  
+	   redirect(base_url(), 'refresh');
+	}
 }
