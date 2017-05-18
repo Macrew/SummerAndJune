@@ -83,8 +83,8 @@ function fbLogout() {
     });
 }
 </script>
-		<div class="signup-bx">
-		
+		<div class="signup-bx  row">
+		<div class="col-sm-2"></div>
 		<?php 
 			
 			
@@ -94,10 +94,11 @@ function fbLogout() {
 				$this->session->set_userdata('signup_role', 1); 
 				//echo $this->session->userdata('signup_role');
 			?>
-				<p> Sign Up As Instructor </p>
-				<div class="button">
-					<a href="javascript:void(0);" onclick="fbLogin()" id="fbLink" class="facebook" > Facebook</a>
-					<a class="google" href="<?php echo $google_login_url;?>">Google+</a>
+				
+				<div class="button col-sm-8">
+				<p class="text-muted text-center">  Sign Up As Instructor </p>
+					<div class="button col-sm-4"><a href="javascript:void(0);" onclick="fbLogin()" id="fbLink" class="facebook" > Facebook</a></div>
+					<div class="button col-sm-4"><a class="google" href="<?php echo $google_login_url;?>">Google+</a></div>
 				</div>
 				
 	<?php	}
@@ -105,32 +106,32 @@ function fbLogout() {
 			{ 
 				$this->session->unset_userdata('signup_role');
 				$this->session->set_userdata('signup_role', 2); 
-				// echo $this->session->userdata('signup_role');
+				//echo $this->session->userdata('signup_role');
 			?>
 			
-				<p> Sign Up As Student </p>
-				<div class="button">
-					<a href="javascript:void(0);" onclick="fbLogin()" id="fbLink" class="facebook" > Facebook</a>
-					<a class="google" href="<?php echo $google_login_url;?>">Google+</a>
+				
+				<div class="button col-sm-8">
+				<p class="text-muted text-center">  Sign Up As Student </p>
+					<div class="button col-sm-4"><a href="javascript:void(0);" onclick="fbLogin()" id="fbLink" class="facebook" > Facebook</a></div>
+					<div class="button col-sm-4"><a class="google" href="<?php echo $google_login_url;?>">Google+</a></div>
 				</div>
 			
 			
 	  <?php }
 		 else 
 		 { ?>
-			<div class="box">
-			<p> I am a Student </p>
+			<div class="box col-sm-4">
+			<p class="text-muted text-center">  I am a Student </p>
 				<div class="button">
-					<a class="signup-button" href="<?php echo  base_url('signup?q=2');?>">Sign Up</a>
+					<a class="signup-button  btn btn-lg btn-primary btn-block" href="<?php echo  base_url('signup?q=2');?>">Sign Up</a>
 				</div>
 			</div>
-			<div class="box">
-			<p> I am an Instructor </p>
+			<div class="box  col-sm-4">
+			<p class="text-muted text-center">  I am an Instructor </p>
 				<div class="button">
-					<a class="signup-button" href="<?php echo  base_url('signup?q=1');?>">Sign Up</a>
+					<a class="signup-button  btn btn-lg btn-primary btn-block" href="<?php echo  base_url('signup?q=1');?>">Sign Up</a>
 				</div>
 			</div>
-			<div class="clr"><hr /></div>
 <?php 	}	?>
-		
+		<div class="col-sm-2"></div>
 		</div>

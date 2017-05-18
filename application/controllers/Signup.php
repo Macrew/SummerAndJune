@@ -54,11 +54,12 @@ class Signup extends CI_Controller {
 	*
 	*/
 	public function saveFacebookUserData(){
-		
+		// echo '<pre>';  print_r($_POST); die;
 		$first_name = $_POST['first_name'];
 		$last_name 	= $_POST['last_name'];
 		$email 		= $_POST['email'];
 		$social_id 	= $_POST['social_id'];
+		$image_url 	= $_POST['image_url'];
 		//$user_role 	= $this->session->userdata('signup_role');
 		$checkEmail = $this->Common_Model->has_duplicate($email, 'sj_users', 'email');
 		if($checkEmail > 0)
@@ -74,6 +75,7 @@ class Signup extends CI_Controller {
 					'email' => $result->email,
 					'first_name' => $result->first_name,
 					'last_name' => $result->last_name,
+					'user_id' => $result->id,
 				);
 				$this->session->set_userdata('logged_in', $sess_array); 
 				if($result->user_role == 1){
@@ -81,29 +83,35 @@ class Signup extends CI_Controller {
 				}else{
 					echo base_url('student/dashboard');
 				}
-		   }
-		   else
-		   {
-			 $this->session->set_flashdata('errormessage', 'invalid username/password');
-			  redirect('login', 'refresh');
-		   }
+			}
+			else
+			{
+				$this->session->set_flashdata('errormessage', 'invalid username/password');
+				redirect('login', 'refresh');
+			}
 		}
-		else{
+		else
+		{
+			$now = date('Y-m-d H:i:s');
 			$tableData = array(
 					'social_profile_id' =>$social_id,
 					'user_role' =>$this->session->userdata('signup_role'),
 					'first_name' =>$first_name,
 					'last_name' =>$last_name,
 					'email' =>$email,
-					'social_type' =>'Facebook'
+					'social_type' =>'Facebook',
+					'created_at' =>$now
 				);
 			$this->Common_Model->insert('sj_users',$tableData);
+			$userId = $this->db->insert_id();
+			$this->Common_Model->insertUsermeta('user_profile_image', $image_url, $userId);
 			$sess_array = array(
 				'social_profile_id' => $social_id,
 				'user_role' => $this->session->userdata('signup_role'),
 				'email' => $email,
 				'first_name' => $first_name,
 				'last_name' => $last_name,
+				'user_id' => $userId,
 			);
 			$this->session->set_userdata('logged_in', $sess_array);
 			if($this->session->userdata('signup_role') == 1){
@@ -139,6 +147,7 @@ class Signup extends CI_Controller {
 			$last_name 	= $user_profile['name']['familyName'];
 			$email 		= $user_profile['emails'][0]['value'];
 			$social_id 	= $user_profile['id'];
+			$image_url 	= $user_profile['image']['url'];
 			//$user_role 	= $this->session->userdata('signup_role');
 			$checkEmail = $this->Common_Model->has_duplicate($email, 'sj_users', 'email');
 			if($checkEmail > 0)
@@ -154,6 +163,7 @@ class Signup extends CI_Controller {
 						'email' => $result->email,
 						'first_name' => $result->first_name,
 						'last_name' => $result->last_name,
+						'user_id' => $result->id,
 					);
 					$this->session->set_userdata('logged_in', $sess_array); 
 					if($result->user_role == 1){
@@ -171,24 +181,29 @@ class Signup extends CI_Controller {
 			   }
 			}
 			else{
+				$now = date('Y-m-d H:i:s');
 				$tableData = array(
 						'social_profile_id' =>$social_id,
 						'user_role' =>$this->session->userdata('signup_role'),
 						'first_name' =>$first_name,
 						'last_name' =>$last_name,
 						'email' =>$email,
-						'social_type' =>'Google'
+						'social_type' =>'Google',
+						'created_at' =>$now
 					);
 				$this->Common_Model->insert('sj_users',$tableData);
+				$userId = $this->db->insert_id();
+				$this->Common_Model->insertUsermeta('user_profile_image', $image_url, $userId);
 				$sess_array = array(
 					'social_profile_id' => $social_id,
 					'user_role' => $this->session->userdata('signup_role'),
 					'email' => $email,
 					'first_name' => $first_name,
 					'last_name' => $last_name,
+					'user_id' => $userId,
 				);
 				$this->session->set_userdata('logged_in', $sess_array);
-				if($user_role == 1){
+				if($this->session->userdata('signup_role') == 1){
 					$url =  base_url('instructor/dashboard');
 					redirect($url, 'refresh');
 				}else{

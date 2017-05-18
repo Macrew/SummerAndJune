@@ -13,7 +13,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @license         MIT
  * @link            https://github.com/chriskacerguis/codeigniter-restserver
  */
-class StudentApi_Model extends CI_Model {
+class InstructorApi_Model extends CI_Model {
 
     public function __construct() {
 		parent::__construct();

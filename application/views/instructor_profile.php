@@ -8,9 +8,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		<li><a href="<?php echo  $this->config->base_url();?>instructor/classes">My Classes</a></li>
 		<li><a href="<?php echo  $this->config->base_url();?>instructor/messages">My Inbox</a></li>
 		<li><a href="<?php echo  $this->config->base_url();?>instructor/settings">Settings</a></li>
+		<li><a href="<?php echo  $this->config->base_url();?>instructor/bankdetails">Bank Details</a></li>
 	</ul>
 </div>
 <div class="username">Welcome <?php echo $user_session['first_name'].' '.$user_session['last_name'];?> </div>
 <h3> Profile </h3>
+<form id="user-profile" action="" method="POST">
 
+
+</form>
 </div>

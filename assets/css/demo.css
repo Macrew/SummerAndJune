@@ -84,9 +84,8 @@ a {
   }
 
 .callbacks_container {
-  margin-bottom: 50px;
   position: relative;
-  width: 100%;
+   top: 50px;
   }
 
 .callbacks {

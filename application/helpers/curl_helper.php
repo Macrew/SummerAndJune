@@ -22,6 +22,7 @@ function curlGet($url)
 function curlPost($url,$params)
 {
   $postData = '';
+
    //create name value pairs seperated by &
    foreach($params as $k => $v) 
    { 

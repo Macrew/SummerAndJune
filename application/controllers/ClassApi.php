@@ -23,9 +23,11 @@ class ClassApi extends REST_Controller {
     {
         // Construct the parent class
         parent::__construct();
-
+		
+		$this->load->library('REST_Controller');
         $this->load->helper('url');
 		$this->load->model('ClassApi_Model'); 
+		$this->load->model('Common_Model'); 
     }
 	/*
 	*
@@ -34,7 +36,33 @@ class ClassApi extends REST_Controller {
 	*/
     public function addClass_post()
     {
-         /* code goes here */
+        $postArray	 	= $this->post();
+		
+		$dataArray = array(
+			'instructor_id' 				=> $postArray['userId'],
+			'class_name' 					=> $postArray['class_name'],
+			'class_desc' 					=> $postArray['about_class'],
+			'class_hours_length' 			=> $postArray['hours_length'],
+			'class_min_length' 				=> $postArray['minutes_length'],
+			'class_instruction' 			=> $postArray['special_instrauctions'],
+			'complexity' 					=> $postArray['complexity'],
+			'class_limit' 					=> 1,
+			'class_date' 					=> $postArray['date_of_class'],
+			'class_time' 					=> $postArray['time_hours'].":".$postArray['time_minutes'],
+			'class_time_zone' 				=> $postArray['class_time_zone'],
+			'class_cost' 					=> $postArray['cost'],
+			'class_cancellation_policy' 	=> $postArray['cancellation_policy'],
+			'class_cancellation_cost' 		=> $postArray['cancellation_cost'],
+			'allow_message' 				=> $postArray['allow_msg'],
+			'allow_bonus' 					=> $postArray['allow_bonus'],
+			'status' 						=> 1,
+			'date_added' 					=> date('Y-m-d H:i:s')
+			);
+		$this->Common_Model->insert('sj_class',$dataArray);
+		$message = [
+            'message' => 'Class added Successfully.'
+        ];
+		$this->set_response($message, REST_Controller::HTTP_OK); // UPDATED (200) being the HTTP response code
     }
 	
 	/*

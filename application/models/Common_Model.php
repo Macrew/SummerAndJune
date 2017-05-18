@@ -23,17 +23,37 @@ class Common_Model extends CI_Model {
 	{
 		 $this->db->select('*');
 		 $this->db->from($tblname);
-		 if($where!='')
-		 	$this->db->where($primaryfield,$id);
+		 $this->db->where($primaryfield,$id);
 		 $this->db->limit($limit,$page);
 		
 		 //$this->db->order_by('created_at','DESC');
 		 //$this->db->group_by('temp_companycategories.CompanyID');
 		 $result = $this->db->get();
-		 return $result;
+		if($result->num_rows() > 0){
+			return $result->result();
+		}else{
+			return false;
+		}
 	}//end of function
 
-
+	/*** select all data from a table with pagination  ***/
+	public function getAllExperience($tblname,$limit,$page,$primaryfield,$id, $userID)
+	{
+		 $this->db->select('*');
+		 $this->db->from($tblname);
+		 $this->db->where($primaryfield,$id);
+		 $this->db->where('instructor_id',$userID);
+		 $this->db->limit($limit,$page);
+		
+		 //$this->db->order_by('created_at','DESC');
+		 //$this->db->group_by('temp_companycategories.CompanyID');
+		 $result = $this->db->get();
+		if($result->num_rows() > 0){
+			return $result->result();
+		}else{
+			return false;
+		}
+	}//end of function
 	/** select single row from a table  **/
 	public function getRow($table,$primaryfield,$id)
     {
@@ -67,17 +87,16 @@ class Common_Model extends CI_Model {
 	}//end of function
 	 
 	/***** Update a row from a table ********/
-	public function update($table,$data,$primaryfield,$id)
+	public function update($table,$data,$where)
     {
-        $this->db->where($primaryfield, $id);
+        $this->db->where($where);
         $q = $this->db->update($table, $data);
-        return $q;
     }
 	
 	/*** Delete a row from a table ******/
-	public function delete($table,$primaryfield,$id)
+	public function delete($table,$where)
     {
-    	$this->db->where($primaryfield,$id);
+    	$this->db->where($where);
     	$this->db->delete($table);
     }
 	// Check whether a value has duplicates in the database
@@ -122,23 +141,22 @@ class Common_Model extends CI_Model {
 	public function insertUsermeta($metaKey, $metaValue, $userId)
 	{
 		$data = array(
+			'user_id'  => $userId,
 			'meta_key'  => $metaKey,
 			'meta_value'  => $metaValue
 		);
 		$this->db->insert('sj_user_meta',$data);
-		$this->db->where('user_id', $userId);
+		//$this->db->where('user_id', $userId);
 		return $this->db->insert_id();
 	}//end of function
 	
 	/****** update metaValue in table ******/
 	public function updateUsermeta($metaKey, $metaValue, $userId)
 	{
-		$data = array(
-			'meta_value'  => $metaValue
-		);
-		$this->db->update('sj_user_meta',$data);
-		$this->db->where('meta_key', $metaKey);
-		$this->db->where('user_id', $userId);
+		$this->db->set('meta_value', $metaValue)
+		->where('meta_key = ',$metaKey)
+		->where('user_id = ',$userId)
+		->update('sj_user_meta');
 		return true;
 	}//end of function
 	

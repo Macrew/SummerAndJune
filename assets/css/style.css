@@ -1,86 +1,3 @@
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font-size: 100%;
-	font: inherit;
-	vertical-align: baseline;
-}
-/* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure, 
-footer, header, hgroup, menu, nav, section {
-	display: block;
-}
-body {
-	line-height: 1;
-}
-ol, ul {
-	list-style: none;
-}
-blockquote, q {
-	quotes: none;
-}
-blockquote:before, blockquote:after,
-q:before, q:after {
-	content: '';
-	content: none;
-}
-table {
-	border-collapse: collapse;
-	border-spacing: 0;
-}
-
-/* Reset End */
-.clr { clear: both;}
-body {
-	background: #2ca1cc;
-	margin: 0 auto;
-	padding: 0 auto;
-	font-family: 'Open Sans', sans-serif;
-	color: #777;
-	font-weight:300;
-	font-size: 16px;
-}
-#wrapper {
-	margin: 10vh auto 30px;
-	width: 1072px;
-	height:auto;
-	background: #fff;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	-o-border-radius: 5px;
-	-ms-border-radius: 5px;
-	border-radius: 5px;
-	padding: 0 0 20px;
-}
-
-.join {
-	color: #222;
-	font-size: 44px;
-	font-weight:700;
-	width: 100%;
-	text-shadow: 1px 0 1px #777;
-	text-align: center;
-}
-.lock {
-	float: right;
-	/* background:url("http://i.imgur.com/Jsq8WUM.png") no-repeat; */
-	width:14px;
-	height:18px;
-	margin-top: 12px;
-}
 .login-options {
 	color: #9c9c9c;
 	float: left;
@@ -141,8 +58,8 @@ body {
     display: inline-block;
     text-align: center;
     vertical-align: middle;
-	 width: 260px;
-	height:40px;
+	 width: 245px;
+	height:52px;
 	padding-top: 10px;
     border: 0px solid #178bb6;
     border-radius: 8px;
@@ -185,8 +102,8 @@ body {
     display: inline-block;
     text-align: center;
     vertical-align: middle;
-	 width: 260px;
-	height:40px;
+	 width: 245px;
+	height:52px;
 	padding-top: 10px;
     border: 0px solid #178bb6;
     border-radius: 8px;
@@ -232,74 +149,47 @@ body {
 .mail-text {
 	color: #777;
 }
-.footer {
-    color: hsl(0, 0%, 100%);
-    margin: 0 auto;
-    padding: 0 0 30px;
-    text-align: center;
-    width: 1072px;
-}
-.footer a {
-  color: #fff;
-  text-decoration: underline;
-}
-.button {
-    text-align: center;
-	 padding-bottom: 20px;
-}
-.logo {
-    padding: 0 0 30px;
-    text-align: center;
-}
-.container {
-    padding: 20px;
-}
-.inner h3 {
-    font-size: 20px;
-	padding: 30px 0 0;
-	text-indent: 20px;
-}
-/*--- Home page CSS Start here */
-.home-button {
-    margin: 0 0 40px;
-    text-align: center;
-    width: 100%;
-}
 
+/*--- Home page CSS Start here */
+.home-slider.callbacks_container.col-lg-8 {
+    float: none;
+    margin: 0 auto;
+}
 
 /*--- Home page CSS End  here */
 
-/*--- Signup page CSS Start  here */
-.signup-bx {
-    margin: 0 auto;
-    width: 60%;
-}
+/*--- Profile page CSS Start  here */
 
-.box {
+/* .profile .left-sec {
     float: left;
-    text-align: center;
-    width: 50%;
+    width: 30%;
 }
-
-.signup-button {
-    background: hsl(196, 65%, 49%);
-    border-color: hsl(196, 65%, 49%);
-	-webkit-border-radius: 4px;
-	-moz-border-radius: 4px;
-	border-radius: 4px;
-    color: hsl(0, 0%, 100%);
-    padding: 10px 30px;
+.profile .right-sec {
+    float: right;
+    width: 60%;
+} */
+/* .right-sec input {
+    height: 30px;
+    margin: 0 0 14px;
+    width: 100%;
 }
-.signup-bx .button {
-    margin: 30px 0 0;
-    padding-bottom: 20px;
-    text-align: center;
-}
-
-.signup-bx p {
+.row-exp input, .row-edu input {
+    width: 28%;
+} */
+span.form-label {
+    float: left;
     font-weight: bold;
+    margin: 3px 0 15px;
+    width: 100%;
+}
+.logo.join {
+    font-size: 30px;
     text-align: center;
 }
+/*--- Profile page CSS End  here */
+
+/*--- Signup page CSS Start  here */
+
 /*--- Signup page CSS End  here */
 
 /*--- Instructor Dashboard page CSS Start here */
@@ -322,15 +212,10 @@ ul.tab li {
     padding: 23px 0 10px 18px;
     width: 100%;
 }
-/*--- Instructor Dashboard page CSS End here */
-
-
-/*---- Responsive  CSS Start here  ----*/
-
-@media (max-width: 767px)
-{
-	#wrapper {background: hsl(0, 0%, 100%);border-radius: 5px;height: auto;margin-top: 30vh;padding: 15px 0 0 10px;width: 93%;}
-	.google { margin: 20px 0 0;}
-	.button { margin-left: 5%;}	
-	.join { color: hsl(0, 0%, 13%); float: left; font-size: 31px;width: 100%;}
+#user_img {
+    visibility: hidden;
 }
+.row-exp.col-lg-12 {
+    margin: 15px 0;
+}
+/*--- Instructor Dashboard page CSS End here */

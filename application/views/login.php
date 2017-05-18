@@ -2,7 +2,6 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 include('header.php');
 ?>
-
 <script>
 window.fbAsyncInit = function() {
     // FB JavaScript SDK configuration and setup
