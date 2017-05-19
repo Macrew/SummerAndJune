@@ -60,7 +60,7 @@ class ClassApi extends REST_Controller {
 			);
 		$this->Common_Model->insert('sj_class',$dataArray);
 		$message = [
-            'message' => 'Class added Successfully.'
+            'message' => 'New class added successfully.'
         ];
 		$this->set_response($message, REST_Controller::HTTP_OK); // UPDATED (200) being the HTTP response code
     }

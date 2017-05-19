@@ -27,7 +27,6 @@ class Instructor extends CI_Controller {
         // Construct the parent class
         parent::__construct();
 		$this->load->helper('url'); 
-		$this->load->database(); 
 		$this->load->model('Common_Model');
 		//$this->load->model('StudentApi_model'); 
     }
@@ -44,19 +43,26 @@ class Instructor extends CI_Controller {
 		echo '<pre>'; print_r(json_decode($result, true)); */
 		$user_session = $this->session->userdata('logged_in');
 		
-		if(isset($user_session) && $user_session['user_role'] == 1){
+		if(isset($user_session) && $user_session['user_role'] == 1)
+		{
 			$socialProfileId = $user_session['social_profile_id'];
 			$userId = $user_session['user_id'];
-			$accountStatus = $this->Common_Model->getValue('sj_users','id','status',$userId);
-			if($accountStatus == 0)
+			$accountStatus = $this->Common_Model->getValue('sj_users','status',array('id'=>$userId));
+			$userStatus = $accountStatus->status;
+			if($userStatus == 1)
 			{
-				$this->load->view('header');
-				$this->load->view('instructor_dashboard');
-				$this->load->view('footer');
+				redirect('instructor/addPaymentDetails','refresh');
 			}
-			else
+			elseif($userStatus == 0)
 			{
 				redirect('instructor/activateaccount','refresh');
+			}
+			elseif($userStatus == 2)
+			{
+					redirect('instructor/profile','refresh');
+					// $this->load->view('header');
+					// $this->load->view('instructor_dashboard');
+					// $this->load->view('footer');
 			}
 			
 		}
@@ -134,6 +140,69 @@ class Instructor extends CI_Controller {
     }
 	
 	
+	
+	 public function profile()
+    {
+       /*  $url = 'http://macrew.info/summerandjune/dev/example/users';
+		$result = curlGet($url);
+		echo '<pre>'; print_r(json_decode($result, true)); */
+		$user_session = $this->session->userdata('logged_in');
+		
+		if(isset($user_session) && $user_session['user_role'] == 1)
+		{
+			$socialProfileId = $user_session['social_profile_id'];
+			$userId = $user_session['user_id'];
+			$accountStatus = $this->Common_Model->getValue('sj_users','status',array('id'=>$userId));
+			$userStatus = $accountStatus->status;
+			if($userStatus == 1)
+			{
+				redirect('instructor/addPaymentDetails','refresh');
+			}
+			elseif($userStatus == 0)
+			{
+				redirect('instructor/activateaccount','refresh');
+			}
+			elseif($userStatus == 2)
+			{
+				
+				$user_session = $this->session->userdata('logged_in');
+				$data['user_session'] = $user_session;
+				 // echo '<pre>'; print_r($user_session); die;
+				 if(isset($user_session) && $user_session['user_role'] == 1){
+					$userId = $user_session['user_id'];
+					$profileImageUrl = $this->Common_Model->getUsermeta($userId, 'user_profile_image');
+					$explodeUrl = explode('sz=', $profileImageUrl->meta_value);
+					$imageUrl = $explodeUrl[0].'sz=200';
+					$data['profile_image_url'] = $profileImageUrl->meta_value;
+					
+					//get logged in User data by instructorAllDetails API 
+					$url = base_url().'/instructorApi/instructorAllDetails/id/'.$userId;
+					$result = curlGet($url);
+					$getUserData = json_decode($result, true);
+					$data['user_data'] = $getUserData;
+					$data['experience'] = $this->getExperienceInstructor();
+					$data['education'] = $this->getEducationInstructor();
+					$this->load->view('header');
+					$this->load->view('instructor_profile', $data);
+					$this->load->view('footer');
+				 }
+				 else
+				{
+					redirect(base_url(),'refresh');
+				}
+				
+			}
+			
+		}
+		else
+		{
+			redirect(base_url(),'refresh');
+		}
+    }
+	
+	
+	
+	
 	/*
 	*
 	*	Edit Profile page for Instructor
@@ -157,15 +226,15 @@ class Instructor extends CI_Controller {
 		$exp_start_date = $this->input->post('exp_start_date');
 		$exp_end_date 	= $this->input->post('exp_end_date');
 		$certificate 	= $this->input->post('certificate');
-		$exprowid 		= $this->input->post('exprowid');
+		$certificateName= $_FILES['certificate_image']['name'];
 		
+		$exprowid 		= $this->input->post('exprowid');
 		$education 		= $this->input->post('education');
 		$edu_start_date = $this->input->post('edu_start_date');
 		$edu_end_date 	= $this->input->post('edu_end_date');
 		$edurowid 	= $this->input->post('edurowid');
 		$expCount =  count($experience);
-		
-		for ($x = 0; $x < $expCount; $x++) {
+		for ($x = 0; $x < $expCount; $x++) { //Save Experience data in database 
 			
 			if($exprowid[$x] == 0)
 			{
@@ -176,29 +245,47 @@ class Instructor extends CI_Controller {
 					'start_date'=>$exp_start_date[$x],
 					'end_date'=>$exp_end_date[$x],
 					'certificate'=>$certificate[$x],
-					'certificate_image'=>$certificate[$x]
+					'certificate_image'=>$certificateName[$x]
 			
 				);
 				$this->Common_Model->insert('sj_instructor_exp_edu',$expArray);
 			}
 			else
 			{
-				$expArray = array(
-					'Name'=>$experience[$x],
-					'start_date'=>$exp_start_date[$x],
-					'end_date'=>$exp_end_date[$x],
-					'certificate'=>$certificate[$x],
-					'certificate_image'=>$certificate[$x]
-			
-				);
 				$rid = $exprowid[$x];
+				
+				if( (isset($certificateName[$x]) && $certificateName[$x] !='') )
+				{
+					$expArray = array(
+						'Name'=>$experience[$x],
+						'start_date'=>$exp_start_date[$x],
+						'end_date'=>$exp_end_date[$x],
+						'certificate'=>$certificate[$x],
+						'certificate_image'=>$certificateName[$x]
+					);
+				}
+				else
+				{
+					// $imageVal = $this->Common_Model->getValue('sj_instructor_exp_edu','certificate_image',array('id'=>$rid));
+					// $certificateImage = $imageVal->certificate_image;
+					
+					$expArray = array(
+						'Name'=>$experience[$x],
+						'start_date'=>$exp_start_date[$x],
+						'end_date'=>$exp_end_date[$x],
+						'certificate'=>$certificate[$x]
+					);
+					
+				}
+				
+				
 				$this->Common_Model->update('sj_instructor_exp_edu',$expArray, array('id'=>$rid));
 			}
 			
 		}
 		
 		$eduCount =  count($education);
-		for ($n = 0; $n < $eduCount; $n++) {
+		for ($n = 0; $n < $eduCount; $n++) { //Save education data in database
 			
 			if($edurowid[$n] == 0)
 			{
@@ -224,10 +311,53 @@ class Instructor extends CI_Controller {
 			
 		}
 		
+		// Upload certificate images in folder and save data in table
+		$data = array();
+        if(!empty($_FILES['certificate_image']['name'])){
+            $filesCount = count($_FILES['certificate_image']['name']);
+            for($i = 0; $i < $filesCount; $i++){
+                $_FILES['userFile']['name'] = $_FILES['certificate_image']['name'][$i];
+                $_FILES['userFile']['type'] = $_FILES['certificate_image']['type'][$i];
+                $_FILES['userFile']['tmp_name'] = $_FILES['certificate_image']['tmp_name'][$i];
+                $_FILES['userFile']['error'] = $_FILES['certificate_image']['error'][$i];
+                $_FILES['userFile']['size'] = $_FILES['certificate_image']['size'][$i];
+
+                $uploadPath = DOCUMENT_ROOT . "assets/images/certificate/";
+                $config['upload_path'] = $uploadPath;
+                $config['allowed_types'] = 'gif|jpg|png';
+                
+                $this->load->library('upload', $config);
+                $this->upload->initialize($config);
+                if($this->upload->do_upload('userFile')){
+                    $fileData = $this->upload->data();
+                    $uploadData[$i]['file_name'] = $fileData['file_name'];
+                    $uploadData[$i]['created'] = date("Y-m-d H:i:s");
+                    $uploadData[$i]['modified'] = date("Y-m-d H:i:s");
+                }
+            }
+            
+            if(!empty($uploadData)){
+                //Insert file information into the database
+				$statusMsg = 'Images uploaded successfully.';
+                $this->session->set_flashdata('statusMsg',$statusMsg);
+            }
+        }
 		
+		
+		//Save user data in User table using API		
 		$user_session 	= $this->session->userdata('logged_in');
 		$userId 		= $user_session['user_id']; //get logged in user id from session
-		$data = array(
+		$stausVal = $this->Common_Model->getValue('sj_users','status',array('id'=>$userId));
+		$staus = $stausVal->status;
+		if($staus == 0)
+		{
+			$stausUpdatedVal = 1;
+		}
+		else
+		{
+			$stausUpdatedVal = 2;
+		}
+		$dataArray = array(
 			'first_name' 	=> $firstName,
 			'middle_name' 	=> $middleName,
 			'last_name' 	=> $lastName,
@@ -237,14 +367,116 @@ class Instructor extends CI_Controller {
 			'state' 		=> $state,
 			'country' 		=> $country,
 			'zip' 			=> $zip,
-			'userId' 		=> $userId,
+			'status' 		=> $stausUpdatedVal
 			);
-			//Save data into database using API
-		$url = base_url().'/instructorApi/saveInstructorBasicInfo';
-		$result = curlPost($url,$data);
-		$data['user_session'] = $user_session;
+		$this->Common_Model->update('sj_users',$dataArray,array('id'=>$user_id));
+		//Save data into database using API
+		
+		/* $url = base_url().'/instructorApi/saveInstructorBasicInfo';
+		$result = curlPost($url,$data); */
+		// $this->load->view('header');
+		// $this->load->view('instructor_profile');
+		// $this->load->view('footer');
+		
+		
+		$user_session = $this->session->userdata('logged_in');
+		
+		if(isset($user_session) && $user_session['user_role'] == 1)
+		{
+			$socialProfileId = $user_session['social_profile_id'];
+			$userId = $user_session['user_id'];
+			$accountStatus = $this->Common_Model->getValue('sj_users','status',array('id'=>$userId));
+			$userStatus = $accountStatus->status;
+			
+			if($userStatus == 1)
+			{
+				redirect('instructor/addPaymentDetails','refresh');
+			}
+			elseif($userStatus == 0)
+			{
+				redirect('instructor/activateaccount','refresh');
+			}
+			elseif($userStatus == 2)
+			{
+				redirect('instructor/profile','refresh');
+			}
+			
+		}
+		else
+		{
+			redirect(base_url(),'refresh');
+		}
+	}
+	
+	/*
+	*
+	*	Show all classes page for Instructor
+	*
+	*/
+	public function addPaymentDetails()
+    {
+		$user_session = $this->session->userdata('logged_in');
+		$userId 		= $user_session['user_id']; 
+		//get logged in User data by instructorAllDetails API 
+		$url = base_url().'/instructorApi/getinstructorPaymentDetails/id/'.$userId;
+		$result = curlGet($url);
+		$getPaymentData = json_decode($result, true);
+		$data['paymentData'] = $getPaymentData;
+		$data['user_session'] = $this->session->userdata('logged_in');
 		$this->load->view('header');
-        $this->load->view('instructor_profile', $data);
+        $this->load->view('instructor_payment',$data);
+		$this->load->view('footer');
+	}
+	
+	/*
+	*
+	*	Show all classes page for Instructor
+	*
+	*/
+	public function savePaymentDetails()
+    {
+
+		$user_id 		= $this->input->post('user_id');
+		$getRowId = $this->Common_Model->getValue('sj_paypal_details','id',array('instructor_id'=>$user_id));
+		
+		if(isset($rowId) && $rowId!='')
+		{
+			$rowId = $getRowId->id;
+			$paypalemail 	= $this->input->post('paypal-email');
+			$postArray = array(
+				'paypal_email'=>$paypalemail,
+				'status'=> 1
+			);
+			$dataArray = array(
+				'status'=> 2,
+			);
+			$this->Common_Model->update('sj_paypal_details',$postArray,array('id'=>$rowId));
+			$this->Common_Model->update('sj_users',$dataArray,array('id'=>$user_id));
+		}
+		else
+		{
+			$paypalemail 	= $this->input->post('paypal-email');
+			$postArray = array(
+				'instructor_id'=>$user_id,
+				'paypal_email'=>$paypalemail,
+				'transcation_id'=>'',
+				'status'=>1,
+			);
+			$dataArray = array(
+				'status'=> 2,
+			);
+			$this->Common_Model->insert('sj_paypal_details',$postArray);
+			$this->Common_Model->update('sj_users',$dataArray,array('id'=>$user_id));
+		}
+		
+	
+		$url = base_url().'/instructorApi/getinstructorPaymentDetails/id/'.$user_id;
+		$result = curlGet($url);
+		$getPaymentData = json_decode($result, true);
+		$data['paymentData'] = $getPaymentData;
+		$data['user_session'] = $this->session->userdata('logged_in');
+		$this->load->view('header');
+        $this->load->view('instructor_payment',$data);
 		$this->load->view('footer');
 	}
 	
@@ -255,10 +487,59 @@ class Instructor extends CI_Controller {
 	*/
 	public function classes()
     {
-		$data['user_session'] = $this->session->userdata('logged_in');
-		$this->load->view('header');
-        $this->load->view('instructor_classes',$data);
-		$this->load->view('footer');
+		
+		$user_session = $this->session->userdata('logged_in');
+		
+		if(isset($user_session) && $user_session['user_role'] == 1)
+		{
+			$socialProfileId = $user_session['social_profile_id'];
+			$userId = $user_session['user_id'];
+			$accountStatus = $this->Common_Model->getValue('sj_users','status',array('id'=>$userId));
+			$userStatus = $accountStatus->status;
+			if($userStatus == 1)
+			{
+				redirect('instructor/addPaymentDetails','refresh');
+			}
+			elseif($userStatus == 0)
+			{
+				redirect('instructor/activateaccount','refresh');
+			}
+			elseif($userStatus == 2)
+			{
+				
+				$user_session = $this->session->userdata('logged_in');
+				$data['user_session'] = $user_session;
+				 // echo '<pre>'; print_r($user_session); die;
+				 if(isset($user_session) && $user_session['user_role'] == 1){
+					$userId = $user_session['user_id'];
+					$profileImageUrl = $this->Common_Model->getUsermeta($userId, 'user_profile_image');
+					$explodeUrl = explode('sz=', $profileImageUrl->meta_value);
+					$imageUrl = $explodeUrl[0].'sz=200';
+					$data['profile_image_url'] = $profileImageUrl->meta_value;
+					
+					//get logged in User data by instructorAllDetails API 
+					$url = base_url().'/instructorApi/instructorAllDetails/id/'.$userId;
+					$result = curlGet($url);
+					$getUserData = json_decode($result, true);
+					$data['user_data'] = $getUserData;
+					$data['experience'] = $this->getExperienceInstructor();
+					$data['education'] = $this->getEducationInstructor();
+					$this->load->view('header');
+					$this->load->view('instructor_classes', $data);
+					$this->load->view('footer');
+				 }
+				 else
+				{
+					redirect(base_url(),'refresh');
+				}
+				
+			}
+			
+		}
+		else
+		{
+			redirect(base_url(),'refresh');
+		}
 	}
 	/*
 	*
@@ -267,10 +548,59 @@ class Instructor extends CI_Controller {
 	*/
 	public function addClass()
     {
-		$data['user_session'] = $this->session->userdata('logged_in');
-		$this->load->view('header');
-        $this->load->view('add_class', $data);
-		$this->load->view('footer');
+		
+		$user_session = $this->session->userdata('logged_in');
+		
+		if(isset($user_session) && $user_session['user_role'] == 1)
+		{
+			$socialProfileId = $user_session['social_profile_id'];
+			$userId = $user_session['user_id'];
+			$accountStatus = $this->Common_Model->getValue('sj_users','status',array('id'=>$userId));
+			$userStatus = $accountStatus->status;
+			if($userStatus == 1)
+			{
+				redirect('instructor/addPaymentDetails','refresh');
+			}
+			elseif($userStatus == 0)
+			{
+				redirect('instructor/activateaccount','refresh');
+			}
+			elseif($userStatus == 2)
+			{
+				
+				$user_session = $this->session->userdata('logged_in');
+				$data['user_session'] = $user_session;
+				 // echo '<pre>'; print_r($user_session); die;
+				 if(isset($user_session) && $user_session['user_role'] == 1){
+					$userId = $user_session['user_id'];
+					$profileImageUrl = $this->Common_Model->getUsermeta($userId, 'user_profile_image');
+					$explodeUrl = explode('sz=', $profileImageUrl->meta_value);
+					$imageUrl = $explodeUrl[0].'sz=200';
+					$data['profile_image_url'] = $profileImageUrl->meta_value;
+					
+					//get logged in User data by instructorAllDetails API 
+					$url = base_url().'/instructorApi/instructorAllDetails/id/'.$userId;
+					$result = curlGet($url);
+					$getUserData = json_decode($result, true);
+					$data['user_data'] = $getUserData;
+					$data['experience'] = $this->getExperienceInstructor();
+					$data['education'] = $this->getEducationInstructor();
+					$this->load->view('header');
+					$this->load->view('add_class', $data);
+					$this->load->view('footer');
+				 }
+				 else
+				{
+					redirect(base_url(),'refresh');
+				}
+				
+			}
+			
+		}
+		else
+		{
+			redirect(base_url(),'refresh');
+		}
 	}
 	
 	/*
@@ -284,7 +614,10 @@ class Instructor extends CI_Controller {
 		$data = $this->input->post();
 		$url = base_url().'/classApi/addClass';
 		$result = curlPost($url,$data);
-		
+		$resultArray = json_decode($result);
+		$message = $resultArray->message;
+	
+        $this->session->set_flashdata('class_message',$message);
 		$this->load->view('header');
         $this->load->view('add_class', $data);
 		$this->load->view('footer');
@@ -297,10 +630,59 @@ class Instructor extends CI_Controller {
 	*/
 	public function messages()
     {
-		$data['user_session'] = $this->session->userdata('logged_in');
-		$this->load->view('header');
-        $this->load->view('instructor_messages',$data);
-		$this->load->view('footer');
+		
+		$user_session = $this->session->userdata('logged_in');
+		
+		if(isset($user_session) && $user_session['user_role'] == 1)
+		{
+			$socialProfileId = $user_session['social_profile_id'];
+			$userId = $user_session['user_id'];
+			$accountStatus = $this->Common_Model->getValue('sj_users','status',array('id'=>$userId));
+			$userStatus = $accountStatus->status;
+			if($userStatus == 1)
+			{
+				redirect('instructor/addPaymentDetails','refresh');
+			}
+			elseif($userStatus == 0)
+			{
+				redirect('instructor/activateaccount','refresh');
+			}
+			elseif($userStatus == 2)
+			{
+				
+				$user_session = $this->session->userdata('logged_in');
+				$data['user_session'] = $user_session;
+				 // echo '<pre>'; print_r($user_session); die;
+				 if(isset($user_session) && $user_session['user_role'] == 1){
+					$userId = $user_session['user_id'];
+					$profileImageUrl = $this->Common_Model->getUsermeta($userId, 'user_profile_image');
+					$explodeUrl = explode('sz=', $profileImageUrl->meta_value);
+					$imageUrl = $explodeUrl[0].'sz=200';
+					$data['profile_image_url'] = $profileImageUrl->meta_value;
+					
+					//get logged in User data by instructorAllDetails API 
+					$url = base_url().'/instructorApi/instructorAllDetails/id/'.$userId;
+					$result = curlGet($url);
+					$getUserData = json_decode($result, true);
+					$data['user_data'] = $getUserData;
+					$data['experience'] = $this->getExperienceInstructor();
+					$data['education'] = $this->getEducationInstructor();
+					$this->load->view('header');
+					$this->load->view('instructor_messages', $data);
+					$this->load->view('footer');
+				 }
+				 else
+				{
+					redirect(base_url(),'refresh');
+				}
+				
+			}
+			
+		}
+		else
+		{
+			redirect(base_url(),'refresh');
+		}
 	}
 	
 	/*
@@ -310,10 +692,59 @@ class Instructor extends CI_Controller {
 	*/
 	public function settings()
     {
-		$data['user_session'] = $this->session->userdata('logged_in');
-		$this->load->view('header');
-        $this->load->view('instructor_settings', $data);
-		$this->load->view('footer');
+		
+		$user_session = $this->session->userdata('logged_in');
+		
+		if(isset($user_session) && $user_session['user_role'] == 1)
+		{
+			$socialProfileId = $user_session['social_profile_id'];
+			$userId = $user_session['user_id'];
+			$accountStatus = $this->Common_Model->getValue('sj_users','status',array('id'=>$userId));
+			$userStatus = $accountStatus->status;
+			if($userStatus == 1)
+			{
+				redirect('instructor/addPaymentDetails','refresh');
+			}
+			elseif($userStatus == 0)
+			{
+				redirect('instructor/activateaccount','refresh');
+			}
+			elseif($userStatus == 2)
+			{
+				
+				$user_session = $this->session->userdata('logged_in');
+				$data['user_session'] = $user_session;
+				 // echo '<pre>'; print_r($user_session); die;
+				 if(isset($user_session) && $user_session['user_role'] == 1){
+					$userId = $user_session['user_id'];
+					$profileImageUrl = $this->Common_Model->getUsermeta($userId, 'user_profile_image');
+					$explodeUrl = explode('sz=', $profileImageUrl->meta_value);
+					$imageUrl = $explodeUrl[0].'sz=200';
+					$data['profile_image_url'] = $profileImageUrl->meta_value;
+					
+					//get logged in User data by instructorAllDetails API 
+					$url = base_url().'/instructorApi/instructorAllDetails/id/'.$userId;
+					$result = curlGet($url);
+					$getUserData = json_decode($result, true);
+					$data['user_data'] = $getUserData;
+					$data['experience'] = $this->getExperienceInstructor();
+					$data['education'] = $this->getEducationInstructor();
+					$this->load->view('header');
+					$this->load->view('instructor_settings', $data);
+					$this->load->view('footer');
+				 }
+				 else
+				{
+					redirect(base_url(),'refresh');
+				}
+				
+			}
+			
+		}
+		else
+		{
+			redirect(base_url(),'refresh');
+		}
 	}
 	
 	/*
@@ -380,7 +811,7 @@ class Instructor extends CI_Controller {
 			if ($uploadOk == 0) {
 				$return['type'] = 'fail';
 			// if everything is ok, try to upload file
-			} 
+			}
 			else 
 			{
 				$url = base_url().'/instructorApi/uploadImage';

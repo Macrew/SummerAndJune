@@ -55,9 +55,9 @@ class Common_Model extends CI_Model {
 		}
 	}//end of function
 	/** select single row from a table  **/
-	public function getRow($table,$primaryfield,$id)
+	public function getRow($table,$where)
     {
-        $this->db->where($primaryfield,$id);
+        $this->db->where($where);
         $result = $this->db->get($table);
         if($result->num_rows() > 0)
         {
@@ -67,14 +67,14 @@ class Common_Model extends CI_Model {
     }
 	 
 	/***** select single value from a row  *******/
-	public function getValue($table,$primaryfield,$fieldname,$id)
+	public function getValue($table,$fieldname,$where)
     {
         $this->db->select($fieldname);
-        $this->db->where($primaryfield,$id);
+        $this->db->where($where);
         $result = $this->db->get($table);
         if($result->num_rows() > 0)
         {
-            return $result->result();
+            return $result->row();
         }
         return array();
     }

@@ -3,12 +3,26 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $user_session 	= $this->session->userdata('logged_in');
 $userId 		= $user_session['user_id'];
 ?>
+<div class='row'>
+		<div class="col-sm-12 text-center success-msg"><?php echo $this->session->flashdata('class_message'); ?></div>
+</div>
 <!-- metisMenu stylesheet -->   
 <div id="dashborad" class="inner">
-
-
-<div class="common-main">
-<h3> Add Class </h3>
+<h3 class='text-center'>Add Class</h3>
+<div class='container-fluid'>
+	<div class="row">
+		<div class= "col-sm-12">
+			<ul class="tab">
+				<li><a href="<?php echo  $this->config->base_url();?>instructor/profile">My Profile</a></li>
+				<li class="active"><a href="<?php echo  $this->config->base_url();?>instructor/classes">My Classes</a></li>
+				<li><a href="<?php echo  $this->config->base_url();?>instructor/messages">My Inbox</a></li>
+				<li><a href="<?php echo  $this->config->base_url();?>instructor/settings">Settings</a></li>
+				<li><a href="<?php echo  $this->config->base_url();?>instructor/addPaymentDetails">Paypal Details</a></li>
+			</ul>
+		</div>
+	</div>
+	<div class='row'>
+		<div class='col-sm-12'><!--left section!-->
 	<form class="form-horizontal" id="block-validate" action="<?php echo base_url();?>instructor/addClassSubmit" method="POST">
 		<div class="form-group">
             <div class="col-sm-4 col-md-3 col-lg-3 text-right">
@@ -24,11 +38,11 @@ $userId 		= $user_session['user_id'];
                 <label class="control-label" for="email">Length of class(*):</label>
             </div>
             <div class="col-sm-4 col-md-4 col-lg-3">
-                <input class="form-control" placeholder="hours" id="number" name="hours_length" value="" type="text" required>
+                <input class="form-control" placeholder="hours" id="number" name="hours_length" value="" type="number" required>
 				
             </div>
 			<div class="col-sm-4 col-md-4 col-lg-3">
-                <input class="form-control" id="number" placeholder="minutes" name="minutes_length" value="" type="text" required>
+                <input class="form-control" id="number" placeholder="minutes" name="minutes_length" value="" type="number" required>
                 
             </div>
         </div>
@@ -79,10 +93,10 @@ $userId 		= $user_session['user_id'];
                 <label class="control-label" for="email">Time of class(*):</label>
             </div>
             <div class="col-sm-4 col-md-4 col-lg-3">
-                <input class="form-control" id="number" placeholder="hours" name="time_hours" value="" type="text" required>
+                <input class="form-control" id="number" placeholder="hours" name="time_hours" value="" type="number" required>
             </div>
 			<div class="col-sm-4 col-md-4 col-lg-3">
-                <input class="form-control" id="number" placeholder="minutes" name="time_minutes" value="" type="text" required>
+                <input class="form-control" id="number" placeholder="minutes" name="time_minutes" value="" type="number" required>
             </div>
         </div>
 		
@@ -108,7 +122,7 @@ $userId 		= $user_session['user_id'];
                 <label class="control-label" for="email">Cost of Class(*):</label>
             </div>
             <div class="col-sm-8 col-md-9 col-lg-6">
-                <input class="form-control" name="cost" value="" type="text" required>
+                <input class="form-control" name="cost" value="" type="number" required>
 				<span>Cost in USD</span>
             </div>
         </div>
@@ -118,7 +132,7 @@ $userId 		= $user_session['user_id'];
                 <label class="control-label" for="email">Cancellation Policy:</label>
             </div>
             <div class="col-sm-8 col-md-9 col-lg-6">
-                <input class="form-control" name="cancellation_policy" value="" type="text">
+                <input class="form-control" name="cancellation_policy" value="" type="number">
 				<span>No of hours prior to class start. Leave balnk is not cancellation policy required.</span>
             </div>
         </div>
@@ -158,9 +172,16 @@ $userId 		= $user_session['user_id'];
         </div>
 		
 		<div class="form-actions ">
-			<input type="hidden" name="userId" value="<?=$userId?>" />
-			<input value="Add" class="btn btn-primary" type="submit">
+			<div class="col-sm-4 col-md-3 col-lg-3 text-right">
+                <label class="control-label" for="email"></label>
+            </div>
+			<div class="col-sm-8 col-md-9 col-lg-6">
+				<input type="hidden" name="userId" value="<?=$userId?>" />
+				<input value="Add" class="btn btn-primary" type="submit">
+			</div>
 		</div>	
 	</form>
+</div>
+</div>
 </div>
 </div>

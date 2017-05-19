@@ -1,4 +1,5 @@
-   	</div> <!-- /.container -->
+		</div> <!-- /.container -->
+   	</div> <!-- /.wrapper -->
 	   <!-- /#wrap -->
             <footer class="Footer bg-dark dker">
                 <p>2017 &copy; Summer And June </p>
@@ -22,16 +23,20 @@
             <!--script src="<?php echo base_url();?>assets/js/app.js"></script-->
 			<script src="<?php echo base_url();?>assets/js/custom.js"></script>
 			<script src="<?php echo base_url();?>assets/js/responsiveslides.min.js"></script>
-			 <script src="<?php echo base_url();?>assets/js/style-switcher.js"></script>
+			 <!--<script src="<?php echo base_url();?>assets/js/style-switcher.js"></script>-->
 			 <script src="<?php echo base_url();?>/assets/lib/jquery-validation/jquery.validate.js"></script>
 			 <script>
 				/* $(function() {
 				  Metis.formGeneral();
 				}); */
-				
+				var today = new Date();
 				$('#dp1').datepicker({
-					format: 'yyyy-mm-dd	'
+					format: 'yyyy-mm-dd	',
+					minDate:today,
+					startDate: "today",
+					autoclose:true
 				});
+				
 				$('#dp2').datepicker();
 				$('#dp3').datepicker();
 				$('#dp3').datepicker();

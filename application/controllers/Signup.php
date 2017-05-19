@@ -54,72 +54,83 @@ class Signup extends CI_Controller {
 	*
 	*/
 	public function saveFacebookUserData(){
-		// echo '<pre>';  print_r($_POST); die;
 		$first_name = $_POST['first_name'];
 		$last_name 	= $_POST['last_name'];
-		$email 		= $_POST['email'];
+		
 		$social_id 	= $_POST['social_id'];
 		$image_url 	= $_POST['image_url'];
-		//$user_role 	= $this->session->userdata('signup_role');
-		$checkEmail = $this->Common_Model->has_duplicate($email, 'sj_users', 'email');
-		if($checkEmail > 0)
+		if(isset($_POST['email']) && $_POST['email'] !='')
 		{
-			$result = $this->Common_Model->getRow('sj_users','email',$email);
-			// print_r($result); 
-			if($result)
+			$email 		= $_POST['email'];
+			$checkEmail = $this->Common_Model->has_duplicate($email, 'sj_users', 'email');
+			if($checkEmail > 0)
 			{
-				$sess_array = array();
+				$result = $this->Common_Model->getRow('sj_users',array('email'=>$email));
+				// print_r($result); 
+				if($result)
+				{
+					$sess_array = array();
+					$sess_array = array(
+						'social_profile_id' => $result->social_profile_id,
+						'user_role' => $result->user_role,
+						'email' => $result->email,
+						'first_name' => $result->first_name,
+						'last_name' => $result->last_name,
+						'user_id' => $result->id,
+					);
+					$this->session->set_userdata('logged_in', $sess_array); 
+					if($result->user_role == 1){
+						echo base_url('instructor/dashboard');
+					}else{
+						echo base_url('student/dashboard');
+					}
+				}
+				else
+				{
+					$this->session->set_flashdata('errormessage', 'invalid username/password');
+					redirect('login', 'refresh');
+				}
+			}
+			else
+			{
+				$now = date('Y-m-d H:i:s');
+				$tableData = array(
+						'social_profile_id' =>$social_id,
+						'user_role' =>$this->session->userdata('signup_role'),
+						'first_name' =>$first_name,
+						'last_name' =>$last_name,
+						'email' =>$email,
+						'social_type' =>'Facebook',
+						'created_at' =>$now
+					);
+				$this->Common_Model->insert('sj_users',$tableData);
+				$userId = $this->db->insert_id();
+				$this->Common_Model->insertUsermeta('user_profile_image', $image_url, $userId);
 				$sess_array = array(
-					'social_profile_id' => $result->social_profile_id,
-					'user_role' => $result->user_role,
-					'email' => $result->email,
-					'first_name' => $result->first_name,
-					'last_name' => $result->last_name,
-					'user_id' => $result->id,
+					'social_profile_id' => $social_id,
+					'user_role' => $this->session->userdata('signup_role'),
+					'email' => $email,
+					'first_name' => $first_name,
+					'last_name' => $last_name,
+					'user_id' => $userId,
 				);
-				$this->session->set_userdata('logged_in', $sess_array); 
-				if($result->user_role == 1){
+				$this->session->set_userdata('logged_in', $sess_array);
+				if($this->session->userdata('signup_role') == 1){
 					echo base_url('instructor/dashboard');
 				}else{
 					echo base_url('student/dashboard');
 				}
 			}
-			else
-			{
-				$this->session->set_flashdata('errormessage', 'invalid username/password');
-				redirect('login', 'refresh');
-			}
 		}
 		else
 		{
-			$now = date('Y-m-d H:i:s');
-			$tableData = array(
-					'social_profile_id' =>$social_id,
-					'user_role' =>$this->session->userdata('signup_role'),
-					'first_name' =>$first_name,
-					'last_name' =>$last_name,
-					'email' =>$email,
-					'social_type' =>'Facebook',
-					'created_at' =>$now
-				);
-			$this->Common_Model->insert('sj_users',$tableData);
-			$userId = $this->db->insert_id();
-			$this->Common_Model->insertUsermeta('user_profile_image', $image_url, $userId);
-			$sess_array = array(
-				'social_profile_id' => $social_id,
-				'user_role' => $this->session->userdata('signup_role'),
-				'email' => $email,
-				'first_name' => $first_name,
-				'last_name' => $last_name,
-				'user_id' => $userId,
-			);
-			$this->session->set_userdata('logged_in', $sess_array);
-			if($this->session->userdata('signup_role') == 1){
-				echo base_url('instructor/dashboard');
-			}else{
-				echo base_url('student/dashboard');
-			}
+			
+				$statusMsg = 'Somthing went wrong. Please check your facebook account.';
+                $this->session->set_flashdata('statusMsg',$statusMsg);
+				$url =  base_url('signup');
+				redirect($url, 'refresh');
 		}
+		
 	}
 	
 	/*
@@ -152,7 +163,7 @@ class Signup extends CI_Controller {
 			$checkEmail = $this->Common_Model->has_duplicate($email, 'sj_users', 'email');
 			if($checkEmail > 0)
 			{
-				$result = $this->Common_Model->getRow('sj_users','email',$email);
+				$result = $this->Common_Model->getRow('sj_users',array('email'=>$email));
 				// print_r($result); 
 				if($result)
 				{

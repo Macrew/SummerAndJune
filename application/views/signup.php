@@ -83,8 +83,12 @@ function fbLogout() {
     });
 }
 </script>
-		<div class="signup-bx  row">
-		<div class="col-sm-2"></div>
+	<div class='row'>
+		<div class="col-sm-12 text-center"><?php echo $this->session->flashdata('statusMsg'); ?></div>
+	</div>
+		
+	<div class="signup-bx">
+				
 		<?php 
 			
 			
@@ -95,11 +99,14 @@ function fbLogout() {
 				//echo $this->session->userdata('signup_role');
 			?>
 				
-				<div class="button col-sm-8">
-				<p class="text-muted text-center">  Sign Up As Instructor </p>
-					<div class="button col-sm-4"><a href="javascript:void(0);" onclick="fbLogin()" id="fbLink" class="facebook" > Facebook</a></div>
-					<div class="button col-sm-4"><a class="google" href="<?php echo $google_login_url;?>">Google+</a></div>
-				</div>
+				
+				<h3 class="sm-title text-center">  Sign Up as Instructor </h3>
+				<div class='row'>
+					<div class="button col-sm-4 col-sm-offset-2 text-center"><a href="javascript:void(0);" onclick="fbLogin()" id="fbLink" class="facebook" > Facebook</a></div>
+					<div class="button col-sm-4 text-center"><a class="google" href="<?php echo $google_login_url;?>">Google+</a></div>
+				</div>	
+					
+				
 				
 	<?php	}
 			elseif(isset($_GET['q']) && $_GET['q'] == 2)
@@ -110,28 +117,29 @@ function fbLogout() {
 			?>
 			
 				
-				<div class="button col-sm-8">
-				<p class="text-muted text-center">  Sign Up As Student </p>
-					<div class="button col-sm-4"><a href="javascript:void(0);" onclick="fbLogin()" id="fbLink" class="facebook" > Facebook</a></div>
-					<div class="button col-sm-4"><a class="google" href="<?php echo $google_login_url;?>">Google+</a></div>
+				<h3 class="sm-title text-center">  Sign Up as Student </h3>
+				<div class='row'>
+					<div class="button col-sm-4 col-sm-offset-2 text-center"><a href="javascript:void(0);" onclick="fbLogin()" id="fbLink" class="facebook" > Facebook</a></div>
+					<div class="button col-sm-4  text-center"><a class="google" href="<?php echo $google_login_url;?>">Google+</a></div>
 				</div>
 			
 			
 	  <?php }
 		 else 
 		 { ?>
-			<div class="box col-sm-4">
-			<p class="text-muted text-center">  I am a Student </p>
-				<div class="button">
-					<a class="signup-button  btn btn-lg btn-primary btn-block" href="<?php echo  base_url('signup?q=2');?>">Sign Up</a>
+			<div class='row'>
+				<div class=" col-sm-4 col-sm-offset-2 text-right">
+				<h3 class="sm-title text-center">  I am a Student </h3>
+					<div class="button">
+						<a class="signup-button  btn btn-lg btn-primary btn-block" href="<?php echo  base_url('signup?q=2');?>">Sign Up</a>
+					</div>
 				</div>
-			</div>
-			<div class="box  col-sm-4">
-			<p class="text-muted text-center">  I am an Instructor </p>
-				<div class="button">
-					<a class="signup-button  btn btn-lg btn-primary btn-block" href="<?php echo  base_url('signup?q=1');?>">Sign Up</a>
+				<div class=" col-sm-4 ">
+				<h3 class="sm-title text-center">  I am an Instructor </h3>
+					<div class="button">
+						<a class="signup-button  btn btn-lg btn-primary btn-block" href="<?php echo  base_url('signup?q=1');?>">Sign Up</a>
+					</div>
 				</div>
 			</div>
 <?php 	}	?>
-		<div class="col-sm-2"></div>
 		</div>

@@ -26,6 +26,8 @@ $(document).ready(function(){
 		
             var formdata = new FormData();
             formdata.append('user_img', document.getElementById("user_img").files[0]);
+			//validateFileExtension(document.getElementById("user_img").files[0]);
+			
             $('#loader').show();
             $.ajax({
                 url: base_url+"instructor/uploadImage",
@@ -71,7 +73,7 @@ $(document).ready(function(){
 	
         if(x < max_fields){ //max input box allowed
             x++; //text box increment
-            $(wrapper).append('<div class="row-exp col-lg-12"> <div class="col-lg-12"> <div class="form-group col-lg-4"> <input type="text" value="" name="experience[]" placeholder="Experience" class="require form-control required"> </div> <div class="form-group col-lg-4"> <div class="datepicker input-group input-append date" data-date="" data-date-format="yyyy-mm-dd"> <input placeholder="Start Date"  class="form-control require exp_start_date" name="exp_start_date[]" value="" type="text" required> <span class="input-group-addon add-on">	<i class="fa fa-calendar"></i></span> </div> </div> <div class="form-group col-lg-4"> <div class="datepicker input-group input-append date" data-date="" data-date-format="yyyy-mm-dd"> <input name="exp_end_date[]" class="form-control require exp_end_date" placeholder="End Date"  value="" type="text" required> <span class="input-group-addon add-on">	<i class="fa fa-calendar"></i></span> </div> </div> </div> <div class="col-lg-12"> <div class="form-group col-lg-4"> <input type="text" value="" name="certificate[]" placeholder="Certificate" class="require certificate  form-control" required> </div> <div class="form-group col-lg-4"> <input type="file" value="" name="certificate_image[]" class="require certificate_image" required> </div> <div class="form-group col-lg-4">  <a href="JavaScript:Void(0);" class="remove_field">X</a></div></div> <input type="hidden" value="0" name="exprowid[]"></div>'); //add input box
+            $(wrapper).append('<div class="row-exp"> <div class="row mg_btm"> <div class="col-lg-3 col-sm-6"> <input type="text" value="" name="experience[]" placeholder="Experience" class="require experience  form-control"> </div> <div class="col-lg-3 col-sm-6"> <div class="datepicker input-group input-append date" data-date="" data-date-format="yyyy-mm-dd"> <input name = "exp_start_date[]" class="form-control require exp_start_date" value="" readonly="" type="text"> <span class="input-group-addon add-on"> <i class="fa fa-calendar"></i> </span> </div> </div> <div class="col-lg-3 col-sm-6"> <div class="datepicker input-group input-append date" data-date="" data-date-format="yyyy-mm-dd"> <input  name = "exp_end_date[]"  class="form-control require exp_end_date" value="" readonly="" type="text"> <span class="input-group-addon add-on"><i class="fa fa-calendar"></i> </span> </div> </div> <div class="col-lg-3 col-sm-6"> <input type="text" value="" name="certificate[]" placeholder="Certificate" class="require certificate  form-control"> </div> </div> <div class="row mg_btm"> <div class="col-lg-3 col-sm-6"> <input type="file" value="" name="certificate_image[]" class="require certificate_image"> </div> <div class="col-lg-3 col-sm-6"><a href="JavaScript:Void(0);" class="remove_field">X</a> </div> </div>  <input type="hidden" value="0" name="exprowid[]"></div>'); //add input box
 			
 			$("#exp-total").val(x);
         }
@@ -85,7 +87,7 @@ $(document).ready(function(){
    // Add more for Education
   
 	var edu_max_fields      = 10; //maximum input boxes allowed
-    var edu_wrapper         = $("#instructor-user-profile .educationss"); //Fields wrapper
+    var edu_wrapper         = $("#instructor-user-profile .educations"); //Fields wrapper
     var edu_add_button      = $("#instructor-user-profile .add-edu"); //Add button ID
    
     var n = 1; //initlal text box count
@@ -93,7 +95,7 @@ $(document).ready(function(){
         e.preventDefault();
         if(n < edu_max_fields){ //max input box allowed
             n++; //text box increment
-            $(edu_wrapper).append('<div class="row-edu col-lg-12"> <div class="form-group col-lg-3"> <input type="text" value="" name="education[]" placeholder="Education" class="require form-control education" required> </div> <div class="form-group col-lg-3"> <div class="datepicker input-group input-append date" data-date="" data-date-format="yyyy-mm-dd"> <input type="text" value="" name="edu_start_date[]" placeholder="Start Date" class="require form-control edu_start_date" required> <span class="input-group-addon add-on">	<i class="fa fa-calendar"></i></span> </div> </div> <div class="form-group col-lg-3"> <div class="datepicker input-group input-append date" data-date="" data-date-format="yyyy-mm-dd"> <input type="text" value="" name="edu_end_date[]"  placeholder="End Date" class="require form-control edu_end_date" required> <span class="input-group-addon add-on">	<i class="fa fa-calendar"></i></span> </div> </div> <div class="form-group col-lg-3"> <a href="JavaScript:Void(0);" class="remove_field-edu">X</a></div> <input type="hidden" value="0" name="edurowid[]"></div>'); //add input box
+            $(edu_wrapper).append('<div class="row-edu"> <div class="row mg_btm"> <div class="col-sm-5"> <input type="text" value="" name="education[]" placeholder="Education" class="require form-control education"> </div> <div class="col-sm-3"> <div class="datepicker input-group input-append date" data-date="" data-date-format="yyyy-mm-dd"> <input type="text" value="" name="edu_start_date[]" placeholder="Start Date" class="require form-control edu_start_date"> <span class="input-group-addon add-on">	<i class="fa fa-calendar"></i></span> </div> </div> <div class="col-sm-3"> <div class="datepicker input-group input-append date" data-date="" data-date-format="yyyy-mm-dd"> <input type="text" value="" name="edu_end_date[]"  placeholder="End Date" class="require form-control edu_end_date"> <span class="input-group-addon add-on">	<i class="fa fa-calendar"></i></span> </div> </div>  <div class="col-sm-1"> <a href="JavaScript:Void(0);" class="remove_field-edu">X</a> </div> <input type="hidden" value="0" name="edurowid[]"> </div></div>'); //add input box
 			$("#edu-total").val(n);
         }
     });
@@ -104,7 +106,7 @@ $(document).ready(function(){
     });
   /* Add more fields for Instructor Account Activation or Profile page end here */
   
-  /* delete experience/education fields for Instructor Account Activation or Profile page Start here */
+  /* delete experience fields for Instructor Account Activation or Profile page Start here */
   
    $(wrapper).on("click",".remove_record", function(e){ //on add input button click
 		e.preventDefault();
@@ -112,19 +114,46 @@ $(document).ready(function(){
 		var saveExp = $(this).attr('id');
 		var splitval = saveExp.split('-');
 		var rowId = splitval[1];
-		alert(rowId);
-		
+	
+		//$(this).closest('div.row-exp').remove();
+		var that = $(this).closest('div.row-exp');
+		that.fadeOut("normal", function() {
+			that.remove();
+		});
 		jQuery.ajax({
 		  type: "POST",
 		  url:  base_url+"InstructorApi/deleteExperienceEducationInstructor",
 		  data: { rowId: rowId,userId:userId}
 		}).success(function( response ) {
-			  alert(response.status);
+			  //alert(response.status);
+
 			// window.location = 'http://macrew.info/summerandjune/dev/instructor/activateAccount';
 		}); 
 		
    });
    
+   /* delete education fields for Instructor Account Activation or Profile page Start here */
+  
+   $(edu_wrapper).on("click",".remove_record", function(e){ //on add input button click
+		e.preventDefault();
+		var userId = $("#userId").val();
+		var saveExp = $(this).attr('id');
+		var splitval = saveExp.split('-');
+		var rowId = splitval[1];
+		var that = $(this).closest('div.row-edu');
+		that.fadeOut("normal", function() {
+			that.remove();
+		});
+		jQuery.ajax({
+		  type: "POST",
+		  url:  base_url+"InstructorApi/deleteExperienceEducationInstructor",
+		  data: { rowId: rowId,userId:userId}
+		}).success(function( response ) {
+			
+			// window.location = 'http://macrew.info/summerandjune/dev/instructor/activateAccount';
+		}); 
+		
+   });
    /* Save experience fields for Instructor Account Activation or Profile page Start here */
   
    $(wrapper).on("click",".save-exp", function(e){ //on add input button click
@@ -220,16 +249,30 @@ $(document).ready(function(){
  
 /*----- Datepicker for multiple ajax fields on profile/account activate page ------*/
 $("body").on("focus", ".datepicker input", function(){
+	var today = new Date();
 	$(this).datepicker({
-					format: 'yyyy-mm-dd'
+					format: 'yyyy-mm-dd',
+					autoclose:true,
+					endDate: "today",
+					maxDate: today
 	});
 	$(this).datepicker("show");
 }); 
 
 $("#update-profile").on('click', function () {
-	alert('dddd');
-	return false;
+	/* alert('dddd');
+	return false; */
 });
 
 }); // end of file
 
+
+function validateFileExtension(fld) {
+	if(!/(\.jpg|\.JPEG|\.png|\.tif)$/i.test(fld.value)) {
+		alert("Please upload jpg, png or tif file.");      
+		fld.form.reset();
+		fld.focus();        
+		return false;   
+	}   
+	return true; 
+}

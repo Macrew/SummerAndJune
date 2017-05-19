@@ -87,7 +87,7 @@ body {
   }
   #content {
     transition: all 0.3s ease-in-out;
-    overflow: hidden;
+    /* overflow: hidden; */
   }
 }
 @media (min-width: 1200px) {
@@ -448,18 +448,12 @@ body:not(.sidebar-left-mini) #menu .nav-header {
 }
 .inner {
   position: relative;
-  min-height: 1px;
-  padding-right: 10px;
-  padding-left: 10px;
-  background: #fff;
-  border: 10px solid #e4e4e4;
+  padding:5vh 0;
+  background:#FFF;
 }
-@media (min-width: 768px) {
-  .inner {
-    float: left;
-    width: 100%;
-  }
-}
+
+ 
+
 /* END CONTENT STYLES */
 /* ==========================================================================
    Footer

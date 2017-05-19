@@ -310,6 +310,31 @@ class InstructorApi extends REST_Controller {
 	
 	/*
 	*
+	*	Get all Education for Instructor
+	*
+	*/
+    public function getinstructorPaymentDetails_get()
+	{
+		$id = $this->get('id');
+        $result = $this->Common_Model->getRow('sj_paypal_details',array('instructor_id'=>$id));
+		//echo $this->db->last_query(); die;
+		if (!empty($result))
+        {
+			
+            $this->set_response($result,REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
+        }
+        else
+        {
+            $this->set_response([
+                'status' => FALSE,
+                'message' => 'No Details found.'
+            ], REST_Controller::HTTP_NOT_FOUND); // NOT_FOUND (404) being the HTTP response code
+        }
+		
+	}
+	
+	/*
+	*
 	*	Update Education for Instructor
 	*
 	*/
@@ -428,7 +453,7 @@ class InstructorApi extends REST_Controller {
 	
 	/*
 	*
-	*	Update profile image from profile or user activate page
+	*	Update profile image URL in database from profile or user activate page
 	*
 	*/
     public function uploadImage_post()

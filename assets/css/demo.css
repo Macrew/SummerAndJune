@@ -85,7 +85,7 @@ a {
 
 .callbacks_container {
   position: relative;
-   top: 50px;
+   top: 5vh;
   }
 
 .callbacks {
@@ -172,6 +172,8 @@ a {
 #slider3-pager a {
   padding: 0;
 }
+
+
 
 @media screen and (max-width: 600px) {
   h1 {
